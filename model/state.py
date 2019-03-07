@@ -2,7 +2,6 @@ from PIL import ImageGrab, ImageStat
 
 # Custom Model Imports
 import model.image_processor as imProc
-from model.devices import SmartDevice, SmartBulb
 
 class State():
     _rgb = (0, 0, 0)
