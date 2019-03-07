@@ -4,10 +4,10 @@ print('Program Active')
 import json
 import time
 from PIL import ImageGrab, ImageStat
+import pytuya
 
 # Custom Model Imports
 import model.image_processor as imProc
-from model.devices import SmartDevice, SmartBulb
 from model.state import State
 
 # Consts
@@ -32,15 +32,12 @@ def run():
     # Obtain State
     state.update_state()
 
-    print(state.rgb())
-
     if state.changed():
         start_time = time.time()
         print('State Updated')
         for dev_name in connections:
             try:
                 set_bulb_colour(connections[dev_name])
-                print(connections[dev_name].status())
             except Exception as e:
                 print("Couldn't change bulb colour on", dev_name)
                 print(e)
@@ -61,7 +58,8 @@ def load_devices():
     for dev_name in devices:
         d = devices[dev_name]
         try:
-            connections[dev_name] = SmartBulb(d['id'], d['ip'], d['key'])
+            connections[dev_name] = pytuya.BulbDevice(d['id'], d['ip'], d['key'])
+            print(connections[dev_name])
         except:
             print('Device', dev_name, 'could not be connected to!')
 
