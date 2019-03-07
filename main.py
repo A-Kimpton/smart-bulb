@@ -50,7 +50,6 @@ def run():
 
 def load_devices():
     devices = {}
-    connections = {}
 
     with open('devices.json') as f:
         devices = json.load(f)
