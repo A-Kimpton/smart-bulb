@@ -50,7 +50,10 @@ class State():
 
     def _update_rgb(self):
         image = self._image
-        self._rgb = imProc.most_frequent_colour(image)
+
+        #self._rgb = imProc.most_frequent_colour(image)
+        self._rgb = imProc.scored_frequent_colour(image)
+
 
     def _update_image_brightness(self):
         # Grayscale -> obtain image stats
