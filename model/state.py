@@ -52,7 +52,8 @@ class State():
         image = self._image
 
         #self._rgb = imProc.most_frequent_colour(image)
-        self._rgb = imProc.scored_frequent_colour(image)
+        #self._rgb = imProc.scored_frequent_colour(image)
+        self._rgb = imProc.kmeans_colour(image) # Obtains 3 clusters
 
 
     def _update_image_brightness(self):

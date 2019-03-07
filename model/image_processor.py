@@ -1,4 +1,5 @@
 from PIL import ImageGrab
+from .k_means_processor import DominantColors
 
 BLACK = (0, 0, 0)
 
@@ -66,4 +67,11 @@ def scored_frequent_colour(image):
 
     rgb = (scoring(rs), scoring(gs), scoring(bs))
 
+    return rgb
+
+def kmeans_colour(image):
+    dc = DominantColors(image, 3)
+    colors = dc.dominantColors()
+
+    rgb = (colors[2][0], colors[2][1], colors[2][2])
     return rgb
