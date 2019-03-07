@@ -11,14 +11,15 @@ import model.image_processor as imProc
 from model.state import State
 
 # Consts
-UPDATE_INTERVAL = 1
+UPDATE_INTERVAL = 0.300
 state = State()
 connections = {}
+amt_updates = 0
 
 def set_bulb_colour(device):
     # Seperate colours
     r, g, b = state.rgb()
-    brightness = state.brightness()
+    brightness = 255
     colour_temp = 255
     mode = state.mode()
 
@@ -31,16 +32,21 @@ def set_bulb_colour(device):
 def run():
     # Obtain State
     state.update_state()
-
+    global amt_updates
     if state.changed():
         start_time = time.time()
-        print('State Updated')
+
+        amt_updates = amt_updates + 1
+        r, g, b = state.rgb()
+        print('State Updated {0:03d} times with RGB values: ({1:03d}, {2:03d}, {3:03d})'.format(amt_updates, r, b, g), end='\r')
+
         for dev_name in connections:
             try:
                 set_bulb_colour(connections[dev_name])
             except Exception as e:
-                print("Couldn't change bulb colour on", dev_name)
-                print(e)
+                pass
+                #print("Couldn't change bulb colour on", dev_name)
+                #print(e)
 
         # Pause the program while the loop catches up
         total_time = time.time() - start_time
@@ -58,7 +64,6 @@ def load_devices():
         d = devices[dev_name]
         try:
             connections[dev_name] = pytuya.BulbDevice(d['id'], d['ip'], d['key'])
-            print(connections[dev_name])
         except:
             print('Device', dev_name, 'could not be connected to!')
 
