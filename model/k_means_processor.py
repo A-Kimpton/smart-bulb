@@ -1,6 +1,7 @@
 import cv2
-from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans, KMeans
 import numpy as np
+import time
 
 class DominantColors:
 
@@ -16,8 +17,8 @@ class DominantColors:
     def dominantColors(self):
 
         #read image
-        img = np.array(self.IMAGE)
 
+        img = np.array(self.IMAGE)
         #reshaping to a list of pixels
         img = img.reshape((img.shape[0] * img.shape[1], 3))
 
@@ -26,6 +27,9 @@ class DominantColors:
 
         #using k-means to cluster pixels
         kmeans = KMeans(n_clusters = self.CLUSTERS)
+        #kmeans = MiniBatchKMeans(n_clusters = self.CLUSTERS)
+
+        # fir the points to kmeans algo
         kmeans.fit(img)
 
         #the cluster centers are our dominant colors.
@@ -33,6 +37,8 @@ class DominantColors:
 
         #save labels
         self.LABELS = kmeans.labels_
+
+
 
         #returning after converting to integer from float
         return self.COLORS.astype(int)
