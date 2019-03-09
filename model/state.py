@@ -1,4 +1,5 @@
 from PIL import ImageGrab, ImageStat
+import time
 
 # Custom Model Imports
 import model.image_processor as imProc
@@ -51,10 +52,16 @@ class State():
     def _update_rgb(self):
         image = self._image
 
+        start_time = time.time()
+
         #self._rgb = imProc.most_frequent_colour(image)
         #self._rgb = imProc.scored_frequent_colour(image)
         #self._rgb = imProc.kmeans_colour(image) # Obtains 3 clusters
+
         self._rgb = imProc.image_bloom_colour(image) # Calc from bloom
+
+        total_time = time.time() - start_time
+        #print('total loop time was', total_time)
 
 
     def _update_image_brightness(self):

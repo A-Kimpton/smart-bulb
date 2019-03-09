@@ -1,0 +1,16 @@
+{
+  "devices": {
+    "bed-room-bulb": {
+      "ip": "192.168.0.109",
+      "type": "bulb",
+      "username": null,
+      "password": null
+    },
+    "bed-room-leds": {
+      "ip": "192.168.0.116",
+      "type": "leds",
+      "username": null,
+      "password": null
+    }
+  }
+}
