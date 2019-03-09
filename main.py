@@ -11,7 +11,7 @@ import model.image_processor as imProc
 from model.state import State
 
 # Consts
-UPDATE_INTERVAL = 0.300
+UPDATE_INTERVAL = 0.001
 state = State()
 connections = {}
 amt_updates = 0
