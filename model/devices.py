@@ -39,7 +39,7 @@ class Device():
 
     @staticmethod
     def command_sanitiser(cmnd):
-        return cmnd.replace(' ', '%20')
+        return cmnd.replace(' ', '%20').replace(';', '%3B')
 
     def set_power_state(self, ps):
         ps = str(ps)
@@ -82,27 +82,34 @@ class Light_Device(Device):
         self._mode = mode
 
     def set_colour(self, rgb, mode=None, ww=0, cw=0):
-        command = 'Color '
-        if not mode:
-            mode = self._mode
-
-        if mode == 'rgb':
-            # Expecting (125, 120, 13)
-            r, g, b = rgb
-            command += str(r) + str(g) + str(b)
-        elif mode == 'RRGGBBWW':
-            # Expecting FF00FF..
-            command += rgb + ww
-        elif mode == 'RRGGBBWWCW':
-            # Expecting FF00FF..
-            command += rgb + ww + wc
-
-        return self.exec_command(command)
+        return set_colour_and_brightness(rgb=rgb, mode=mode, ww=ww, cw=cw)
 
     def set_brightness(self, value):
-        if value >= 0 and value <=100:
-            command = 'Dimmer ' + str(value)
+        return set_colour_and_brightness(brightness=value)
 
-            return self.exec_command(command)
+    def set_colour_and_brightness(self, rgb=None, mode=None, ww=0, cw=0, brightness=None):
+        command = ''
+        if rgb and brightness > -1:
+            command += 'Backlog '
 
-        return None
+        if rgb:
+            command = 'Color '
+            if not mode:
+                mode = self._mode
+
+            if mode == 'rgb':
+                # Expecting (125, 120, 13)
+                r, g, b = rgb
+                command += str(r) + str(g) + str(b)
+            elif mode == 'RRGGBBWW':
+                # Expecting FF00FF..
+                command += rgb + ww
+            elif mode == 'RRGGBBWWCW':
+                # Expecting FF00FF..
+                command += rgb + ww + wc + ';'
+
+        if brightness > -1:
+            if value >= 0 and value <=100:
+                command = 'Dimmer ' + str(value)
+
+        return self.exec_command(command)

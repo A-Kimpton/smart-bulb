@@ -10,9 +10,10 @@ last_update_time = -1
 amt_updates = 0
 
 def set_bulb_colour(device):
-    # Seperate colours
     rgb = state.rgb()
-    device.set_colour(rgb)
+    brightness = state.brightness()
+
+    device.set_colour_and_brightness(rgb=rgb, brightness=brightness)
 
 def run():
 
@@ -27,7 +28,9 @@ def run():
     if state.changed() and UPDATE_INTERVAL <= (time.time() - last_update_time):
         amt_updates = amt_updates + 1
         r, g, b = state.rgb()
-        print('State Updated {0:03d} times with RGB values: ({1:03d}, {2:03d}, {3:03d})'.format(amt_updates, r, b, g), end='\r')
+        brightness = state.brightness()
+
+        print('State Updated {0:03d} times with RGB values: ({1:03d}, {2:03d}, {3:03d}) and brightness: {4}'.format(amt_updates, r, b, g, brightness), end='\r')
 
         for dev_name in devices:
             try:

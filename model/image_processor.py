@@ -1,10 +1,9 @@
 from PIL import ImageGrab
-from .k_means_processor import DominantColors
 
 BLACK = (0, 0, 0)
-LOW_THRESHOLD = 10
-MID_THRESHOLD = 40
-HIGH_THRESHOLD = 240
+LOW_THRESHOLD = 40
+MID_THRESHOLD = 60
+HIGH_THRESHOLD = 230
 
 def most_frequent_colour(image):
 
@@ -22,7 +21,7 @@ def most_frequent_colour(image):
     return rgb
 
 def image_bloom_colour(img):
-    img = img.resize((644, 270))
+    #img = img.resize((644, 270))
     dark_pixels = 1
     mid_range_pixels = 1
     total_pixels = 1
@@ -116,36 +115,5 @@ def scored_frequent_colour(image):
             return 255
 
     rgb = (scoring(rs), scoring(gs), scoring(bs))
-
-    return rgb
-
-def kmeans_colour(image):
-
-    # Kmeans is really computationally heavy, this is a massive compression
-    # Screenshots are usually 3440x1440
-    image = image.resize((644, 270))
-
-    dc = DominantColors(image, 3)
-    colors = dc.dominantColors()
-
-
-    rgb1 = (colors[0][0], colors[0][1], colors[0][2])
-    rgb2 = (colors[1][0], colors[1][1], colors[1][2])
-    rgb3 = (colors[2][0], colors[2][1], colors[2][2])
-
-    # Choose the set with the highest deviation of colour
-    rgb = (0, 0, 0)
-    devi = 0
-    for rgb_set in colors:
-        average = (rgb_set[0] + rgb_set[1] + rgb_set[2]) / 3
-        temp_devi = 0
-
-        for rgb_col in rgb_set:
-            temp_devi += abs(average - rgb_col)
-
-        temp_devi = temp_devi / 3
-        if temp_devi > devi:
-            devi = temp_devi
-            rgb = (rgb_set[0], rgb_set[1], rgb_set[2])
 
     return rgb
