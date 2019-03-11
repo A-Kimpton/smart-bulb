@@ -2,18 +2,20 @@ from model.devices import Light_Device
 import json
 from model.state import State
 import time
+from threading import Thread
 
 devices = {}
 state = State()
-UPDATE_INTERVAL = 0.010 # Updates no faster than 30ms
+UPDATE_INTERVAL = 0.010 # Updates no faster than 10ms
 last_update_time = -1
 amt_updates = 0
+DEBUG=False
 
 def set_bulb_colour(device):
-    rgb = state.rgb()
-    brightness = state.brightness()
 
-    device.set_colour_and_brightness(rgb=rgb, brightness=brightness)
+    hsv_colour = state.hsv() # Mixed RGB + Brightness
+
+    device.set_hsv_colour(hsv_colour)
 
 def run():
 
@@ -22,6 +24,7 @@ def run():
     global last_update_time
 
     # Obtain State
+    st = time.time()
     state.update_state()
 
     # Main check
@@ -29,15 +32,23 @@ def run():
         amt_updates = amt_updates + 1
         r, g, b = state.rgb()
         brightness = state.brightness()
-
-        print('State Updated {0:03d} times with RGB values: ({1:03d}, {2:03d}, {3:03d}) and brightness: {4}'.format(amt_updates, r, b, g, brightness), end='\r')
-
+        lt = time.time() - st
+        threads = []
         for dev_name in devices:
             try:
-                set_bulb_colour(devices[dev_name])
+                thr = Thread(target = set_bulb_colour, args =[devices[dev_name]])
+                thr.start()
+                threads.append(thr)
                 last_update_time = time.time()
             except Exception as e:
-                pass
+                print(e)
+                
+        # Wait for the leds to update
+        for th in threads:
+            th.join()
+
+        lut = last_update_time - st
+        print('State Updated {0:03d} times with RGB values: ({1:03d}, {2:03d}, {3:03d}) and brightness: {4:03d} and time: {5:06f}s and request sent time: {6:06f}s'.format(amt_updates, r, b, g, brightness, lt, lut), end='\r')
 
 def load_config():
     config = {}
@@ -49,7 +60,7 @@ def load_config():
     for dev_name in config['devices']:
         device = config['devices'][dev_name]
         device['name'] = dev_name
-        connections[dev_name] = Light_Device(device)
+        connections[dev_name] = Light_Device(device, DEBUG=DEBUG)
 
     return connections
 

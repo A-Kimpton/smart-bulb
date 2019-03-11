@@ -1,4 +1,6 @@
 import requests
+import model.utils as utils
+import time
 
 class Device():
 
@@ -32,8 +34,7 @@ class Device():
             return resp_json
         else:
             if self._debug:
-                print('Device {} returned http code: {}'.format(self._name,
-             resp_code))
+                print('Device {} returned http code: {}'.format(self._name, resp_code))
             return resp_code
 
 
@@ -68,12 +69,13 @@ class Device():
 
 class Light_Device(Device):
 
-    def __init__(self, device):
-        super().__init__(device)
+    def __init__(self, device, DEBUG=False):
+        super().__init__(device, DEBUG)
         super().set_option_x(17, 1) # (0..255, 0..255, 0..255)
         self._mode = 'rgb'
 
         super().exec_command('Fade 1')
+        super().exec_command('Weblog 4')
 
     def mode(self):
         return self._mode
@@ -82,34 +84,47 @@ class Light_Device(Device):
         self._mode = mode
 
     def set_colour(self, rgb, mode=None, ww=0, cw=0):
-        return set_colour_and_brightness(rgb=rgb, mode=mode, ww=ww, cw=cw)
+        return self.set_colour_and_brightness(rgb=rgb, mode=mode, ww=ww, cw=cw)
 
     def set_brightness(self, value):
-        return set_colour_and_brightness(brightness=value)
+        return self.set_colour_and_brightness(brightness=value)
 
     def set_colour_and_brightness(self, rgb=None, mode=None, ww=0, cw=0, brightness=None):
         command = ''
-        if rgb and brightness > -1:
+        if rgb and brightness:
             command += 'Backlog '
 
         if rgb:
-            command = 'Color '
+            command += 'Color '
             if not mode:
                 mode = self._mode
 
             if mode == 'rgb':
                 # Expecting (125, 120, 13)
                 r, g, b = rgb
-                command += str(r) + str(g) + str(b)
+                command += str(r) + ',' + str(g) + ',' + str(b)
             elif mode == 'RRGGBBWW':
                 # Expecting FF00FF..
                 command += rgb + ww
             elif mode == 'RRGGBBWWCW':
                 # Expecting FF00FF..
-                command += rgb + ww + wc + ';'
+                command += rgb + ww + wc
+            command += ';'
 
-        if brightness > -1:
-            if value >= 0 and value <=100:
-                command = 'Dimmer ' + str(value)
+
+        if brightness and brightness >= 0 and brightness <=100:
+                command += 'Dimmer ' + str(brightness)
 
         return self.exec_command(command)
+
+    def set_hsv_colour(self, hsv, mode='rgb'):
+        h, s, v = hsv
+        if mode == 'rgb':
+            rgb = utils.hsv2rgb(h, s, v/100)
+            return self.set_colour(rgb, 'rgb')
+        else:
+            h = int(h)
+            s = int(s)
+            v = int(v)
+            command = 'HSBColor ' + str(h) + ',' + str(s) + ',' + str(v)
+            return self.exec_command(command)

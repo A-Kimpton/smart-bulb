@@ -1,6 +1,8 @@
 from PIL import ImageGrab, ImageStat
 import time
 from model.sound_processor import AudioReader
+import model.utils as utils
+import math
 
 # Custom Model Imports
 import model.image_processor as imProc
@@ -39,6 +41,14 @@ class State():
         return self._mode
     def changed(self):
         return self._changed
+    def hsv(self):
+        r, g, b = self._rgb
+
+        h, s, v = utils.rgb2hsv(r, g, b)
+
+        v = self._brightness
+
+        return (h, s, v)
 
     def _update_image(self):
         # Take a screenshot
@@ -57,29 +67,54 @@ class State():
         #self._rgb = imProc.kmeans_colour(image) # Obtains 3 clusters
 
         self._rgb = imProc.image_bloom_colour(image) # Calc from bloom
-
-        total_time = time.time() - start_time
+        
         #print('total loop time was', total_time)
 
     def _update_brightness(self):
         # Updating brightness based on sound:
-        brightness = 10
+        brightness = 20
 
-        min_rms = 0     # Audio = 0 means off
-        max_rms = 20000 # Audio >= 20000 likely to be maxing volume meter
 
-        min_scaled = 0  # Add to brightness by 0
-        max_scaled = 90 # Add to brightness by 90
 
         rms = self._audio_device.get_audio_rms()
+
+        #scaled_rms = self._rms_by_scale(15000, 100-brightness, rms)
+        scaled_rms = self._rms_by_range(100-brightness, rms)
+
+
+        self._brightness = brightness + scaled_rms
+
+    def _rms_by_scale(self, max_rms, max_scale, rms):
+        min_rms = 0     # Audio = 0 means off
+        max_rms = max_rms # Audio >= 20000 likely to be maxing volume meter
+
+        min_scaled = 0  # Add to brightness by 0
+        max_scaled = max_scale # Add to brightness by 90
 
         if rms > max_rms:
             rms = max_rms # Sometimes rms is greater than whats set
 
-        scaled_rms = 90 * (rms / max_rms)
+        scaled_rms = (90 * (rms / max_rms))
+        scaled_rms = int(round(scaled_rms, -1)) #Rounds to nearest 10
 
-        self._brightness = brightness + scaled_rms
+        return scaled_rms
 
+    def _rms_by_range(self, max_scale, rms):
+
+        if rms < 1000:
+            return 0
+        elif rms < 3000:
+            return 0
+        elif rms < 5000:
+            return 30
+        elif rms < 10000:
+            return 50
+        elif rms < 12000:
+            return 60
+        elif rms < 15000:
+            return 70
+        else:
+            return max_scale
 
     def _update_changed(self):
         rgb = self._rgb

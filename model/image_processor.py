@@ -21,7 +21,7 @@ def most_frequent_colour(image):
     return rgb
 
 def image_bloom_colour(img):
-    #img = img.resize((644, 270))
+    img = img.resize((100, 41))
     dark_pixels = 1
     mid_range_pixels = 1
     total_pixels = 1
