@@ -14,8 +14,10 @@ The equipment I'm using is:
  - Lumimans SmartBulb RGB: https://www.amazon.co.uk/dp/B07DW539RR/
  - RGB Controller: https://www.amazon.co.uk/dp/B078RQVNLK/
  - The smart bulb was flashed using `Tuya-Convert` and the RGB Controller was flashed via `Sonoff-Tasmota`
+ - The RGB Controller is controlling some RGB Strips running accross the room, and the bulb is the primary bulb in the room.
  
 Tuya-Convert: https://github.com/ct-Open-Source/tuya-convert
+
 Sonoff-Tasmota: https://github.com/arendst/Sonoff-Tasmota/
 
 The image processor algorim is copied from the `Screenbloom` project for Phillips Hue bulbs. Its rather slow, even with image resizing: hopefully a newer algorithm can be implmented soon.
