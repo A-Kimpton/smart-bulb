@@ -110,8 +110,10 @@ class State():
 
     def _rms_by_range(self, max_scale, rms):
 
-        if rms < 6000:
-            return 10
+        if rms == 0:
+            return 0
+        elif rms < 6000:
+            return 0
         elif rms < 10000:
             return 30
         elif rms < 14000:
