@@ -20,8 +20,17 @@ Tuya-Convert: https://github.com/ct-Open-Source/tuya-convert
 
 Sonoff-Tasmota: https://github.com/arendst/Sonoff-Tasmota/
 
-The image processor algorim is copied from the `Screenbloom` project for Phillips Hue bulbs. Its rather slow, even with image resizing: hopefully a newer algorithm can be implmented soon.
+The image processor algorithm is copied from the `Screenbloom` project for Phillips Hue bulbs. Its rather slow, even with image resizing: hopefully a newer algorithm can be implmented soon.
 
 ScreenBloom: https://github.com/kershner/screenbloom
 
+------------------------------------------------------------------------------------------------------
+
+Requirements:
+
+- This project uses a custom python builtin called pyAudio. This allows hooking into output sound devices as if they were input devices: https://github.com/intxcc/pyaudio_portaudio
+ - You will also need these packages:
+   - PIL (Pillow)
+   - Audioop
+   - Requests
 
