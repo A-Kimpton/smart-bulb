@@ -8,17 +8,19 @@ import math
 import model.image_processor as imProc
 
 class State():
-    _rgb = (0, 0, 0)
-    _brightness = 255
-    _image = 0
 
-    _prev_rgb = (0, 0, 0)
-    _prev_brightness = 255
-
-    _changed = False
-
-    def __init__(self, audio_device_id=17):
+    def __init__(self, audio_device_id=17, SOUND=True, COLOUR=True, DEFAULT_COLOUR=(0, 255, 255), DEFAULT_BRIGHTNESS=255):
         self._audio_device = AudioReader(device_id=17)
+        self._enable_sound = SOUND
+        self._enable_colour = COLOUR
+        self._rgb = DEFAULT_COLOUR
+        self._brightness = DEFAULT_BRIGHTNESS
+
+        self._image = 0
+        self._prev_rgb = (0, 0, 0)
+        self._prev_brightness = 255
+        self._changed = False
+        self._image = 0
 
     def update_state(self):
 
@@ -26,9 +28,11 @@ class State():
         self._move_to_prev()
 
         # Obtain new values
-        self._update_image()
-        self._update_rgb()
-        self._update_brightness()
+        if self._enable_colour:
+            self._update_image()
+            self._update_rgb()
+        if self._enable_sound:
+            self._update_brightness()
 
         # Update the changed field
         self._update_changed()
@@ -67,7 +71,7 @@ class State():
         #self._rgb = imProc.kmeans_colour(image) # Obtains 3 clusters
 
         self._rgb = imProc.image_bloom_colour(image) # Calc from bloom
-        
+
         #print('total loop time was', total_time)
 
     def _update_brightness(self):
@@ -80,6 +84,11 @@ class State():
 
         #scaled_rms = self._rms_by_scale(15000, 100-brightness, rms)
         scaled_rms = self._rms_by_range(100-brightness, rms)
+        #try:
+        #    dBm = 20*math.log(rms, 10)
+        #    print('20 log rms: {0} - rms: {1}'.format(dBm, rms))
+        #except:
+        #    print('null')
 
 
         self._brightness = brightness + scaled_rms
@@ -94,24 +103,20 @@ class State():
         if rms > max_rms:
             rms = max_rms # Sometimes rms is greater than whats set
 
-        scaled_rms = (90 * (rms / max_rms))
+        scaled_rms = (max_scaled * (rms / max_rms))
         scaled_rms = int(round(scaled_rms, -1)) #Rounds to nearest 10
 
         return scaled_rms
 
     def _rms_by_range(self, max_scale, rms):
 
-        if rms < 1000:
-            return 0
-        elif rms < 3000:
-            return 0
-        elif rms < 5000:
-            return 30
+        if rms < 6000:
+            return 10
         elif rms < 10000:
+            return 30
+        elif rms < 14000:
             return 50
-        elif rms < 12000:
-            return 60
-        elif rms < 15000:
+        elif rms < 16000:
             return 70
         else:
             return max_scale

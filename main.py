@@ -5,11 +5,12 @@ import time
 from threading import Thread
 
 devices = {}
-state = State()
-UPDATE_INTERVAL = 0.010 # Updates no faster than 10ms
+settings = {}
 last_update_time = -1
 amt_updates = 0
-DEBUG=False
+
+
+state = None
 
 def set_bulb_colour(device):
 
@@ -28,7 +29,7 @@ def run():
     state.update_state()
 
     # Main check
-    if state.changed() and UPDATE_INTERVAL <= (time.time() - last_update_time):
+    if state.changed() and settings['UPDATE_INTERVAL'] <= (time.time() - last_update_time):
         amt_updates = amt_updates + 1
         r, g, b = state.rgb()
         brightness = state.brightness()
@@ -42,7 +43,7 @@ def run():
                 last_update_time = time.time()
             except Exception as e:
                 print(e)
-                
+
         # Wait for the leds to update
         for th in threads:
             th.join()
@@ -51,22 +52,35 @@ def run():
         print('State Updated {0:03d} times with RGB values: ({1:03d}, {2:03d}, {3:03d}) and brightness: {4:03d} and time: {5:06f}s and request sent time: {6:06f}s'.format(amt_updates, r, b, g, brightness, lt, lut), end='\r')
 
 def load_config():
+
+
+    global settings
+    global devices
+
     config = {}
     connections = {}
 
     with open('config.json') as f:
         config = json.load(f)
 
+    settings = config['settings']
+
     for dev_name in config['devices']:
         device = config['devices'][dev_name]
         device['name'] = dev_name
-        connections[dev_name] = Light_Device(device, DEBUG=DEBUG)
+        connections[dev_name] = Light_Device(device, DEBUG=settings['DEBUG'])
 
-    return connections
+
+    devices = connections
 
 if __name__ == "__main__":
     # get a connection on all devices in JSON
-    devices = load_config()
+    load_config()
+    state = State(
+        SOUND=settings['ENABLE_SOUND'],
+        COLOUR=settings['ENABLE_COLOUR'],
+        audio_device_id=settings['AUDIO_DEVICE_ID']
+        )
     while True:
         # Exec Program
         run()
