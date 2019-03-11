@@ -2,7 +2,7 @@
 
 Goal of the project:
  - Control smart RGB controllers and smart bulbs to be in sync with the PC's colours displayed on screen and PC audio.
- - Devices should be flashed with Tasmotto so that the HTTP requests to the bulbs work.
+ - Devices should be flashed with Tasmota so that the HTTP requests to the bulbs/controllers work.
  
 There is currently two ways to control the smart devices: statically or cued by either a "sound processor" or "image processor". This is set in config.json:
  - If `ENABLE_COLOUR` is set to `true`, it will ignore `DEFAULT_COLOUR` (RGB array from 0..255) and use the image processor to select a colour from the screen to be the desired colour displayed by the smart devices. Otherwise, if `ENABLE_COLOUR` is set to `false`, the `DEFAULT_COLOUR` is used.
