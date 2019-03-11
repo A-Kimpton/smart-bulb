@@ -3,8 +3,8 @@
     "DEBUG": false,
     "ENABLE_COLOUR": false,
     "ENABLE_SOUND": true,
-    "DEFAULT_COLOUR": [0, 255, 255],
-    "DEFUALT_BRIGHTNESS": 255,
+    "DEFAULT_COLOUR": [255, 0, 0],
+    "DEFAULT_BRIGHTNESS": 255,
     "UPDATE_INTERVAL": 0.0001,
     "AUDIO_DEVICE_ID": 17
   },

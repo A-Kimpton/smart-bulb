@@ -79,6 +79,8 @@ if __name__ == "__main__":
     state = State(
         SOUND=settings['ENABLE_SOUND'],
         COLOUR=settings['ENABLE_COLOUR'],
+        DEFAULT_COLOUR=settings['DEFAULT_COLOUR'],
+        DEFAULT_BRIGHTNESS=settings['DEFAULT_BRIGHTNESS'],
         audio_device_id=settings['AUDIO_DEVICE_ID']
         )
     while True:

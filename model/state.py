@@ -76,9 +76,7 @@ class State():
 
     def _update_brightness(self):
         # Updating brightness based on sound:
-        brightness = 20
-
-
+        brightness = 10
 
         rms = self._audio_device.get_audio_rms()
 
@@ -115,11 +113,11 @@ class State():
         elif rms < 6000:
             return 0
         elif rms < 10000:
-            return 30
+            return 0
         elif rms < 14000:
-            return 50
+            return max_scale
         elif rms < 16000:
-            return 70
+            return max_scale
         else:
             return max_scale
 
