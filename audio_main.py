@@ -108,7 +108,7 @@ def score_frequencies(x_fft, fft):
     score['base']['peak_score'] = score['base']['peak'] / total
     score['mid']['peak_score'] = score['mid']['peak'] / total
     score['treb']['peak_score'] = score['treb']['peak'] / total
-    print('Base: {:03f}, Mid: {:03f}, Treble: {:03f}'.format(score['base']['peak_score'], score['mid']['peak_score'], score['treb']['peak_score']))
+    #print('Base: {:03f}, Mid: {:03f}, Treble: {:03f}'.format(score['base']['peak_score'], score['mid']['peak_score'], score['treb']['peak_score']))
     for type in score:
         if score[type]['count'] == 0:
             score[type]['count'] = 1
@@ -119,7 +119,7 @@ def score_frequencies(x_fft, fft):
     score['base']['average_score']  = score['base']['average'] / total
     score['mid']['average_score'] = score['mid']['average'] / total
     score['treb']['average_score'] = score['treb']['average'] / total
-    print('ABase: {:03f}, AMid: {:03f}, ATreble: {:03f}'.format(score['base']['average_score'], score['mid']['average_score'], score['treb']['average_score']))
+    #print('ABase: {:03f}, AMid: {:03f}, ATreble: {:03f}'.format(score['base']['average_score'], score['mid']['average_score'], score['treb']['average_score']))
 
     return score
 
@@ -140,7 +140,7 @@ def load_config():
     for dev_name in config['devices']:
         device = config['devices'][dev_name]
         device['name'] = dev_name
-        connections[dev_name] = Light_Device(device, DEBUG=True)
+        connections[dev_name] = Light_Device(device, DEBUG=settings['DEBUG'])
 
 
     devices = connections
