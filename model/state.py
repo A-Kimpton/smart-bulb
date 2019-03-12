@@ -112,8 +112,8 @@ class State():
             return 0
         elif rms < 6000:
             return 0
-        elif rms < 10000:
-            return 0
+        elif rms < 12000:
+            return max_scale
         elif rms < 14000:
             return max_scale
         elif rms < 16000:
